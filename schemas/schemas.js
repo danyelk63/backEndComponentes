@@ -3,7 +3,6 @@ const mongoose = require("mongoose"),
 
 const schemas = {
     userSchema: new Schema({
-
         userMail: { type: String },
         userPass: { type: String },
         userFirstName: { type: String },

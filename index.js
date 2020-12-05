@@ -1,7 +1,7 @@
 var express = require("express");
 var bodyParser = require('body-parser');
 var app = express();
-var port = 3000;
+var port = 3500;
 var mongoose = require("mongoose");
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -23,12 +23,14 @@ mongoose.connect('mongodb+srv://daniel:daniel123@clusterserviciosmedicos.agn3m.m
 })
 
 app.get('/login', jsonParser, (req, res) => {
-    body = req.body;
+    let body = req.body;
     db.User.find({userMail: body.userMail}).then(function (users) {
-        if(users[0].userMail == body.userMail && users[0].userPass == md5(body.userPass))
+        if(users[0].userMail == body.userMail && users[0].userPass == md5(body.userPass) && users[0] != undefined)
             return res.send({success: true, nessage: ""})
         else
-            return res.send({success: false, message: "error"})
+            return res.send({success: false, message: "Error Usuario o Contraseña incorrectos"})
+    }).catch(function (e) {
+        res.send(e);
     })
 });
 
