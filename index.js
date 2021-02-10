@@ -26,7 +26,7 @@ app.get('/login', jsonParser, (req, res) => {
     let body = req.body;
     db.User.find({userMail: body.userMail}).then(function (users) {
         if(users[0].userMail == body.userMail && users[0].userPass == md5(body.userPass) && users[0] != undefined)
-            return res.send({success: true, nessage: ""})
+            return res.send({success: true, roll: body.userRoll ,message: ""})
         else
             return res.send({success: false, message: "Error Usuario o Contraseña incorrectos"})
     }).catch(function (e) {
