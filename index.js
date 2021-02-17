@@ -81,6 +81,7 @@ app.put('/login', jsonParser, (req, res) => {
 app.post('/cita', jsonParser, (req, res) => {
     let body = req.body;
     let fechaServidorAux = new Date(body.fechaCita);
+    body.fechaCreacion = new Date().toISOString();
     var cita = new db.Cita(body);
     db.Cita.count({doctorId: body.doctorId, fechaCita: body.fechaCita}).then(function (response) {
         if(fechaServidorAux.getDay() <= 5 && response <= 10)
