@@ -80,13 +80,16 @@ app.put('/login', jsonParser, (req, res) => {
 
 app.post('/cita', jsonParser, (req, res) => {
     let body = req.body;
-    let fechaServidorAux = new Date(body.fehcaCita);
+    let fechaServidorAux = new Date(body.fechaCita);
     var cita = new db.Cita(body);
-    db.Cita.count({doctorId: body.doctorId}).then(function (response) {
+    db.Cita.count({doctorId: body.doctorId, fechaCita: body.fechaCita}).then(function (response) {
         if(fechaServidorAux.getDay() <= 5 && response <= 10)
             cita.save().then(function (citas) {
-                return res.send(citas);
+                return res.send({success: true, message: "Se asigno la cita correctamente"});
             })
+        else
+            return res.send({success: true, message: "Fecha incorrecta"});
+            
 
     })
 });
