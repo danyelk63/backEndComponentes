@@ -79,14 +79,15 @@ app.put('/login', jsonParser, (req, res) => {
 })
 
 app.post('/cita', jsonParser, (req, res) => {
-    body = req.body;
-    let fechaServidorAux = new Date();
-    let fechaServidor = fechaServidorAux.getFullYear() + "-" + fechaServidorAux.getMonth() + "-" + fechaServidorAux.getDay() + " " + fechaServidorAux.getHours() + ":" + fechaServidorAux.getMinutes() + ":" + fechaServidorAux.getSeconds() + "." + fechaServidorAux.getMilliseconds();
-    body.fechaCreacion = fechaServidor;
-    body.fechaCita = fechaServidor;
-    var cita = new db.Cita(body)
-    cita.save().then(function (citas) {
-        return res.send(citas);
+    let body = req.body;
+    let fechaServidorAux = new Date(body.fehcaCita);
+    var cita = new db.Cita(body);
+    db.Cita.count({doctorId: body.doctorId}).then(function (response) {
+        if(fechaServidorAux.getDay() <= 5 && response <= 10)
+            cita.save().then(function (citas) {
+                return res.send(citas);
+            })
+
     })
 });
 
@@ -95,6 +96,8 @@ app.post('/cita', jsonParser, (req, res) => {
  */
 app.get('/especialidades', jsonParser, (req, res) => {
     let especialidades = [];
+    let fecha = new Date();
+    console.log(fecha.getDay())
     db.User.find({userRoll: "medico"}).then(function (response) {
         response.map(persona => {
             if(especialidades.indexOf(persona.userEsp) == -1 && persona.userEsp != "")
