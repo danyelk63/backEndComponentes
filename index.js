@@ -24,6 +24,7 @@ mongoose.connect('mongodb+srv://daniel:daniel123@clusterserviciosmedicos.agn3m.m
 
 app.get('/login', jsonParser, (req, res) => {
     let body = req.body;
+    console.log("_____" + body);
     db.User.find({userMail: body.userMail}).then(function (users) {
         if(users[0].userMail == body.userMail && users[0].userPass == md5(body.userPass) && users[0] != undefined)
             return res.send({success: true, roll: body.userRoll, pNombre: body.userFirstName, pApellido: body.userFirstLastName, esp: body.userEsp, message: ""})
