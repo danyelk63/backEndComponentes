@@ -65,6 +65,8 @@ app.post('/registro', jsonParser, (req, res) => {
                     res.send({success: false, message: "Error"})
             })
         }
+        else
+            res.send({success: false, message: "Error, numero de medicos ya son 10"})
     })
 });
 
@@ -88,9 +90,25 @@ app.post('/cita', jsonParser, (req, res) => {
     })
 });
 
-app.get('/cita', jsonParser, (req, res) => {
-    body = req.body;
-    db.Cita.find({ userId: body.userId }).then(function (citas) {
-        return res.send(citas);
-    })
+/**
+ * Trae todas las especialidades
+ */
+app.get('/especialidades', jsonParser, (req, res) => {
+    let especialidades = [];
+    db.User.find({userRoll: "medico"}).then(function (response) {
+        response.map(persona => {
+            if(especialidades.indexOf(persona.userEsp) == -1 && persona.userEsp != "")
+                especialidades.push(persona.userEsp);
+        })
+        res.send(especialidades);
+    });
+});
+
+/**
+ * Trae todos los medicos dependiendo de la especialidad 
+ */
+app.get('/especialidades/medicos', jsonParser, (req, res) => {
+    db.User.find({userEsp: req.query.esp}).then(function (response) {
+        res.send(response);
+    });
 });
