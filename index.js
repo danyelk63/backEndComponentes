@@ -119,3 +119,12 @@ app.get('/especialidades/medicos', jsonParser, (req, res) => {
         res.send(response);
     });
 });
+
+/**
+ * Trae todas las citas de un medico
+ */
+app.get('/citas/medicos', jsonParser, (req, res) => {
+    db.cita.find({doctorId: req.query.doctorId, estado: "1"}).then(function (response) {
+        res.send(response);
+    });
+})
