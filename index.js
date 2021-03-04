@@ -56,17 +56,17 @@ app.post('/registro', jsonParser, (req, res) => {
         telefono: body.telefono,
         direccion: body.direccion,
     });
-    db.User.count({userRoll: "medico"}).then(function (cantidad) {
-        if ((body.userRoll == "medico" && cantidad <= 10) || body.userRoll != "medico" ) {
+    db.User.count({ userRoll: "medico" }).then(function (cantidad) {
+        if ((body.userRoll == "medico" && cantidad < 10) || body.userRoll != "medico") {
             usuari.save(function (error, userDoc) {
-                if(error == null)
-                    res.send({success: true, message: "Agregado usuario " + userDoc.userFirstName})
+                if (error == null)
+                    res.send({ success: true, message: "Agregado usuario " + userDoc.userFirstName })
                 else
-                    res.send({success: false, message: "Error"})
+                    res.send({ success: false, message: "Error" })
             })
         }
         else
-            res.send({success: false, message: "Error, numero de medicos ya son 10"})
+            res.send({ success: false, message: "Error, numero de medicos ya son 10" })
     })
 });
 
@@ -82,15 +82,15 @@ app.post('/cita', jsonParser, (req, res) => {
     let body = req.body;
     let fechaServidorAux = new Date(body.fechaCita);
     body.fechaCreacion = new Date().toISOString();
-    var cita = new w(body);
-    db.Cita.count({doctorId: body.doctorId, fechaCita: body.fechaCita}).then(function (response) {
-        if(fechaServidorAux.getDay() <= 5 && response <= 10)
+    var cita = new db.Cita(body);
+    db.Cita.count({ doctorId: body.doctorId, fechaCita: body.fechaCita }).then(function (response) {
+        if (fechaServidorAux.getDay() <= 5 && response < 10)
             cita.save().then(function (citas) {
-                return res.send({success: true, message: "Se asigno la cita correctamente"});
+                return res.send({ success: true, message: "Se asigno la cita correctamente" });
             })
         else
-            return res.send({success: true, message: "Fecha incorrecta"});
-            
+            return res.send({ success: true, message: "Se han alcanzado el maximo de citas diarias" });
+
 
     })
 });
@@ -102,9 +102,9 @@ app.get('/especialidades', jsonParser, (req, res) => {
     let especialidades = [];
     let fecha = new Date();
     console.log(fecha.getDay())
-    db.User.find({userRoll: "medico"}).then(function (response) {
+    db.User.find({ userRoll: "medico" }).then(function (response) {
         response.map(persona => {
-            if(especialidades.indexOf(persona.userEsp) == -1 && persona.userEsp != "")
+            if (especialidades.indexOf(persona.userEsp) == -1 && persona.userEsp != "")
                 especialidades.push(persona.userEsp);
         })
         res.send(especialidades);
@@ -115,7 +115,7 @@ app.get('/especialidades', jsonParser, (req, res) => {
  * Trae todos los medicos dependiendo de la especialidad 
  */
 app.get('/especialidades/medicos', jsonParser, (req, res) => {
-    db.User.find({userEsp: req.query.esp}).then(function (response) {
+    db.User.find({ userEsp: req.query.esp }).then(function (response) {
         res.send(response);
     });
 });
@@ -124,7 +124,7 @@ app.get('/especialidades/medicos', jsonParser, (req, res) => {
  * Trae todas las citas de un medico
  */
 app.get('/citas/medicos', jsonParser, (req, res) => {
-    db.Cita.find({doctorId: req.body.doctorId}).then(response => {
+    db.Cita.find({ doctorId: req.query.doctorId }).then(response => {
         res.send({respuesta: response});
-    });
+    })
 })
