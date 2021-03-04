@@ -84,12 +84,12 @@ app.post('/cita', jsonParser, (req, res) => {
     body.fechaCreacion = new Date().toISOString();
     var cita = new db.Cita(body);
     db.Cita.count({ doctorId: body.doctorId, fechaCita: body.fechaCita }).then(function (response) {
-        if (fechaServidorAux.getDay() <= 5 && response < 10)
+        if (fechaServidorAux.getDay() < 5 && response < 10)
             cita.save().then(function (citas) {
                 return res.send({ success: true, message: "Se asigno la cita correctamente" });
             })
         else
-            return res.send({ success: true, message: "Se han alcanzado el maximo de citas diarias" });
+            return res.send({ success: true, message: "Error: limite diario alcanzado o fuera de rango" });
 
 
     })
@@ -127,4 +127,16 @@ app.get('/citas/medicos', jsonParser, (req, res) => {
     db.Cita.find({ doctorId: req.query.doctorId }).then(response => {
         res.send({respuesta: response});
     })
-})
+});
+
+/**
+ * Cambia el estado de la cita
+ */
+app.put('/citas/medicos', jsonParser, (req, res) => {
+    db.Cita.find({pacienteId: req.body.pacienteId, fechaCita: req.body.fechaCita}).then((response) => {
+        response[0].estado = req.body.estado;
+        response[0].save().then(function () {
+            res.send({success: true, message: "Se actualizo la cita"})
+        });
+    });
+});
