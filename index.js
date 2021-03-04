@@ -125,6 +125,6 @@ app.get('/especialidades/medicos', jsonParser, (req, res) => {
  */
 app.get('/citas/medicos', jsonParser, (req, res) => {
     db.Cita.find({doctorId: req.body.doctorId}).then(response => {
-        res.send(response)
+        res.send({respuesta: response});
     });
 })
