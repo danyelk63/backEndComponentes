@@ -140,3 +140,12 @@ app.put('/citas/medicos', jsonParser, (req, res) => {
         });
     });
 });
+
+/**
+ * Trae todas las citas de un paciente
+ */
+app.get('/citas/paciente', jsonParser, (req, res) => {
+    db.Cita.find({ pacienteId: req.query.pacienteId }).then(response => {
+        res.send({respuesta: response});
+    })
+});
